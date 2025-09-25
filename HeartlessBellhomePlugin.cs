@@ -16,7 +16,7 @@ public class HeartlessBellhomePlugin : BaseUnityPlugin
         Logger = base.Logger;
         Logger.LogInfo("Heartless Bellhome has loaded!");
 
-        _ = new Hook(typeof(PlayRandomAudioEvent).GetMethod("Awake",
+        _ = new Hook(typeof(PlayRandomAudioEvent).GetMethod("Start",
                 BindingFlags.NonPublic | BindingFlags.Instance),
             (Action<PlayRandomAudioEvent> orig, PlayRandomAudioEvent self) =>
             {
