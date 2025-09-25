@@ -16,16 +16,11 @@ public class HeartlessBellhomePlugin : BaseUnityPlugin
         Logger = base.Logger;
         Logger.LogInfo("Heartless Bellhome has loaded!");
 
-        _ = new Hook(typeof(PlayRandomAudioEvent).GetMethod("Start",
-                BindingFlags.NonPublic | BindingFlags.Instance),
+        _ = new Hook(typeof(PlayRandomAudioEvent).GetMethod(nameof(PlayRandomAudioEvent.Play)),
             (Action<PlayRandomAudioEvent> orig, PlayRandomAudioEvent self) =>
             {
+                if (self.gameObject is { name: "heartbeat_audio", scene.name: "Belltown_Room_Spare" }) return;
                 orig(self);
-
-                if (self.gameObject is { name: "heartbeat_audio", scene.name: "Belltown_Room_Spare" })
-                {
-                    DestroyImmediate(self);
-                }
             });
     }
 }

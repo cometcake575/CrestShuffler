@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HeartlessBellhome")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0.0+1219c9b708ba4c17f7fa14b4b55e686b37c1ceae")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0.0+fdba49f90601d8ca13d0ecd245b792ac64b45982")]
 [assembly: System.Reflection.AssemblyProductAttribute("HeartlessBellhome")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HeartlessBellhome")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
