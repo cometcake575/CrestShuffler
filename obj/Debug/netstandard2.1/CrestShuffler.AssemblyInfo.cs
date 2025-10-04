@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CrestShuffler")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0.0+a899ec075375e333f5f087f30696c11feb590e14")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0.0+8243b7f81f286964478015664b3a76f04c10551b")]
 [assembly: System.Reflection.AssemblyProductAttribute("CrestShuffler")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CrestShuffler")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
