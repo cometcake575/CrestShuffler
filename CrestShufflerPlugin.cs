@@ -10,7 +10,7 @@ using Random = UnityEngine.Random;
 
 namespace CrestShuffler;
 
-[BepInPlugin("com.cometcake575.crestshuffler", "Crest Shuffler", "1.0.2")]
+[BepInPlugin("com.cometcake575.crestshuffler", "Crest Shuffler", "1.0.3")]
 public class CrestShufflerPlugin : BaseUnityPlugin
 {
     internal new static ManualLogSource Logger;
@@ -77,7 +77,7 @@ public class CrestShufflerPlugin : BaseUnityPlugin
             .Where(crest => crest.name != PlayerData.instance.CurrentCrestID).ToList();
         var crest = crests[Random.Range(0, crests.Count)];
         PlayerData.instance.IsCurrentCrestTemp = true;
-        ToolItemManager.AutoEquip(crest, false);
+        ToolItemManager.AutoEquip(crest, false, false);
         HeroController.instance.UpdateSilkCursed();
     }
 }
