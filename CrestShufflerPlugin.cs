@@ -17,6 +17,7 @@ public class CrestShufflerPlugin : BaseUnityPlugin
 
     private static int _rerollTime;
     private static float _timeUntilReroll;
+    private static ToolMode _toolShuffle;
     
     private void Awake()
     {
@@ -52,6 +53,11 @@ public class CrestShufflerPlugin : BaseUnityPlugin
                     self.OnDeath += () => StartCoroutine(RandomCrest());
                 });
         }
+
+        _toolShuffle = Config.Bind("Options", "Shuffle Tools", ToolMode.Off,
+            "Whether to shuffle tools as well as the crest.\n" +
+            "'Unlocked' will give the player random tools they have unlocked.\n" +
+            "'All' will give the player random tools, including ones they do not have.").Value;
     }
 
     private void Update()
@@ -83,9 +89,26 @@ public class CrestShufflerPlugin : BaseUnityPlugin
         PlayerData.instance.IsCurrentCrestTemp = true;
         ToolItemManager.AutoEquip(crest, false, false);
         HeroController.instance.UpdateSilkCursed();
-        
+
+        if (_toolShuffle != ToolMode.Off)
+        {
+            var tools = (_toolShuffle == ToolMode.Unlocked ? 
+                ToolItemManager.GetUnlockedTools() : 
+                ToolItemManager.GetAllTools()).ToList();
+            
+            for (var i = 0; i < 30; i++) ToolItemManager.AutoEquip(tools[Random.Range(0, tools.Count)]);
+        }
+
         yield return null;
         hc.RegainControl();
         hc.StartAnimationControl();
+    }
+
+    // ReSharper disable once UnusedMember.Local
+    private enum ToolMode
+    {
+        Off,
+        Unlocked,
+        All
     }
 }
