@@ -4,13 +4,14 @@ using System.Linq;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Logging;
+using GlobalEnums;
 using MonoMod.RuntimeDetour;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace CrestShuffler;
 
-[BepInPlugin("com.cometcake575.crestshuffler", "Crest Shuffler", "1.0.4")]
+[BepInPlugin("com.cometcake575.crestshuffler", "Crest Shuffler", "1.2.0")]
 public class CrestShufflerPlugin : BaseUnityPlugin
 {
     internal new static ManualLogSource Logger;
@@ -39,6 +40,23 @@ public class CrestShufflerPlugin : BaseUnityPlugin
                 {
                     orig(self);
                     StartCoroutine(RandomCrest());
+                });
+        }
+
+        if (Config.Bind("Options", "Reroll on damage", false,
+                "Whether to reroll the crest when taking damage").Value)
+        {
+            _ = new Hook(typeof(HeroController).GetMethod(nameof(HeroController.TakeDamage)),
+                (Action<HeroController, GameObject, CollisionSide, int, HazardType, DamagePropertyFlags> orig, 
+                    HeroController self, 
+                    GameObject go, 
+                    CollisionSide damageSide, 
+                    int damageAmount, 
+                    HazardType hazardType, 
+                    DamagePropertyFlags damagePropertyFlags) =>
+                {
+                    if (self.CanTakeDamage()) StartCoroutine(RandomCrest());
+                    orig(self, go, damageSide, damageAmount, hazardType, damagePropertyFlags);
                 });
         }
 
@@ -76,6 +94,7 @@ public class CrestShufflerPlugin : BaseUnityPlugin
 
     private static IEnumerator RandomCrest()
     {
+        yield return new WaitForSeconds(0.05f);
         var hc = HeroController.instance;
         yield return new WaitUntil(() => !hc.controlReqlinquished && 
                                          !hc.cState.dashing && 
