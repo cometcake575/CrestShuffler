@@ -11,7 +11,7 @@ using Random = UnityEngine.Random;
 
 namespace CrestShuffler;
 
-[BepInPlugin("com.cometcake575.crestshuffler", "Crest Shuffler", "1.2.0")]
+[BepInPlugin("com.cometcake575.crestshuffler", "Crest Shuffler", "1.2.1")]
 public class CrestShufflerPlugin : BaseUnityPlugin
 {
     internal new static ManualLogSource Logger;
