@@ -19,7 +19,20 @@ public class CrestShufflerPlugin : BaseUnityPlugin
     private static int _rerollTime;
     private static float _timeUntilReroll;
     private static ToolMode _toolShuffle;
-    
+    private static string[] _crestBlacklist;
+    private static CrestMode _crestMode;
+
+    private static bool CrestAllowed(ToolCrest crest)
+    {
+        return _crestMode switch
+        {
+            CrestMode.BaseOnly => crest.IsBaseVersion,
+            CrestMode.HighestUnlocked => !crest.IsUpgradedVersionUnlocked &&
+                                         (crest.IsUnlocked || crest.IsBaseVersion),
+            _ => true
+        };
+    }
+
     private void Awake()
     {
         Logger = base.Logger;
@@ -31,6 +44,17 @@ public class CrestShufflerPlugin : BaseUnityPlugin
         _rerollTime = Config.Bind("Options", "Reroll Time", 60, 
             "How often the crest should be rerolled in seconds (-1 to disable the timer)").Value;
         _timeUntilReroll = _rerollTime;
+
+        _crestMode = Config.Bind("Options", "Hunters Crest Mode", CrestMode.All,
+            "How to handle hunters crest.\n" +
+            "'All' shuffles every tier (original behavior).\n" +
+            "'BaseOnly' only rolls base versions.\n" +
+            "'HighestUnlocked' only rolls the highest tier you have unlocked.").Value;
+
+        _crestBlacklist = Config.Bind("Options", "Crest Blacklist", "",
+                "Comma-separated crest IDs to exclude from the shuffle.\n" +
+                "Valid IDs: Hunter, Hunter_v2, Hunter_v3, Reaper, Wanderer, Warrior, Witch, Toolmaster, Spell, Cursed, Cloakless").Value
+            .Split(',').Select(id => id.Trim()).Where(id => id.Length > 0).ToArray();
 
         if (Config.Bind("Options", "Reroll on transition", false,
                 "Whether to reroll the crest when going through a scene transition").Value)
@@ -103,7 +127,17 @@ public class CrestShufflerPlugin : BaseUnityPlugin
                                          !hc.cState.airDashing);
 
         var crests = ToolItemManager.GetAllCrests()
-            .Where(crest => crest.name != PlayerData.instance.CurrentCrestID).ToList();
+            .Where(crest => crest.name != PlayerData.instance.CurrentCrestID &&
+                            !_crestBlacklist.Contains(crest.name, StringComparer.OrdinalIgnoreCase) &&
+                            CrestAllowed(crest))
+            .ToList();
+
+        if (crests.Count == 0)
+        {
+            Logger.LogWarning("No crests available after blacklist and crest mode filtering, skipping reroll.");
+            yield break;
+        }
+
         var crest = crests[Random.Range(0, crests.Count)];
         PlayerData.instance.IsCurrentCrestTemp = true;
         ToolItemManager.AutoEquip(crest, false, false);
@@ -129,5 +163,12 @@ public class CrestShufflerPlugin : BaseUnityPlugin
         Off,
         Unlocked,
         All
+    }
+
+    private enum CrestMode
+    {
+        All,
+        BaseOnly,
+        HighestUnlocked
     }
 }
